@@ -4,28 +4,37 @@ Starter template for the **Development of AI Applications** course final group p
 
 ## Team members
 
-- Member 1 Name (email@example.com)
-- Member 2 Name (email@example.com)
-- Member 3 Name (email@example.com)
+- Lotta Kauppinen (amk1005174@student.hamk.fi / lotta.kauppinen@student.hamk.fi)
+- Jenna Kiviaho (email@example.com)
+- Marjaana Koski (email@example.com)
+- Jani Laakso (email@example.com)
 
 ## Problem
 
 ### Intended users
-Who are the primary target users of this application?
+
+- The target user is someone who wants to track their everyday spending easily. 
+- The app is useful for someone who makes purchases in store or online and are able to get a receipt from the purchase. 
 
 ### Problem statement
-What specific problem does this application solve for those users?
+
+Going through receipts and tracking personal spending can be time-consuming because products are not automatically categorized. Users must manually identify and categorize their purchases to understand which types of products they buy most frequently and which categories consume the largest portion of their budget.
+
+This manual process makes it difficult to maintain an up-to-date overview of personal spending. The application addresses this problem by automatically extracting and categorizing purchases from receipts, allowing users to more easily understand their spending habits.
 
 ### Why AI is appropriate
-Why does this problem require AI / LLM capabilities rather than traditional deterministic software?
+
+Receipts can vary in layout, wording, product names or the level of detail. A more traditional system based on rules, would require many predefined rules. An AI model can easily understand different formats or wording that varies between receipts.
 
 ## Solution
 
-Briefly describe your application, its primary value proposition, and how it addresses the problem statement above.
+The application is a personal spending tracker that allows users to submit the receipts of their recent purchases. It uses AI to extract the products, prices and other relevant information. After that it will categorize the purchases into different spending categories such as groceries, entertainment, restaurants, hygienic products, clothing etc. 
+
+The application reduces the manual work that goes into categorizing the purchases and tracking on what takes the largest portion of the budget. The user receives a structured data of their spending habits.
 
 ## Main user workflow
 
-1. **User Input:** The user submits a prompt or query via the Gradio user interface.
+1. **User Input:** The user uploads a receipt through the Gradio user interface.
 2. **Processing & Guardrails:** The application service layer (`src/services/ai_service.py`) validates and formats the request.
 3. **Model Response:** The model client calls Ollama locally and returns the response back through the service layer to the UI.
 
