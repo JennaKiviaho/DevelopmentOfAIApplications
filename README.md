@@ -54,7 +54,6 @@ Model Client (src/models/model_client.py)
   ↓
 Ollama (Local LLM Server)
 ```
-
 Another version:
 ```text
 User
