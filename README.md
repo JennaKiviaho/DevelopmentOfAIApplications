@@ -5,7 +5,7 @@ Starter template for the **Development of AI Applications** course final group p
 ## Team members
 
 - Lotta Kauppinen (amk1005174@student.hamk.fi / lotta.kauppinen@student.hamk.fi)
-- Jenna Kiviaho (email@example.com)
+- Jenna Kiviaho (amk1004342@student.hamk.fi)
 - Marjaana Koski (email@example.com)
 - Jani Laakso (email@example.com)
 
@@ -58,8 +58,12 @@ Ollama (Local LLM Server)
 
 ## Model
 
-- **Model used:** e.g., `llama3.2` (or specified local Ollama model)
-- **Selection rationale:** Why was this specific model chosen for your project (e.g., lightweight, performance, context size)?
+- **Model used:** `minicpm-v`
+- **Selection rationale:**
+  - **Accessibility:** The llama3.2-vision is restricted in EU unlike minicpm-v is available globally and locally via Ollama.
+  - **Performance:** Processes both image and text input and it has a strong OCR capability. Model can categorize items into to structured format (JSON).
+  - **Hardware efficiency:** Model is lightweight and does run well with standard hardware.
+  - **Capability:** Reads small and dense text efficiently by dividing images to pieces.
 
 ## Additional AI capability
 
@@ -69,12 +73,18 @@ Select at least one additional capability to implement for your final project:
 - [ ] Tools / External API integration
 - [ ] Model Context Protocol (MCP)
 - [ ] Agentic workflow (Model-selected actions based on observations)
-- [ ] Memory / Persistent state
-- [ ] Multimodal interaction (Text + Images)
+- [x] Memory / Persistent state
+- [x] Multimodal interaction (Text + Images)
 - [ ] Other: ______________________
 
 ### Capability justification
 Explain why the selected capability is useful and necessary for your application's user problem.
+
+- **Multimodal interaction:**:
+  Receipts can be photos or digital images. A multimodal model can read the receipt image and user's given instructions at the same time.
+
+- **Memory / Persistent state:**
+  The app tracks spending so it needs to remember past purchases. The data of the receipts are saved and the user is able to see total spending and summaries over time.
 
 ## Setup
 
@@ -107,7 +117,7 @@ copy .env.example .env
 Ensure `.env` contains valid values for `OLLAMA_BASE_URL` and `MODEL_NAME`:
 ```env
 OLLAMA_BASE_URL=http://localhost:11434
-MODEL_NAME=llama3.2
+MODEL_NAME=minicpm-v
 ```
 
 ### 4. Start Ollama
@@ -115,7 +125,7 @@ MODEL_NAME=llama3.2
 Make sure Ollama is installed and running locally, then pull your configured model:
 
 ```bash
-ollama run llama3.2
+ollama run minicpm-v
 ```
 
 ### 5. Run the application
@@ -140,10 +150,31 @@ Describe your evaluation methodology and summarize key results. Starter test cas
 
 Refer to [`evaluation/README.md`](evaluation/README.md) for guidelines on defining success, edge cases, and failure scenarios.
 
+- **Successful case:**
+  Clear picture of a receipt to verify the model extracts all the items and prices correctly from the image and then categorizes products into structured format (JSON).
+
+- **Difficult case:**
+  Unclear image of a receipt, which can be for example a blurry picture or wrinkled receipt. This is to test how model handles imperfect visual quality.
+
+- **Failure case:** Testing with a picture of something else than a receipt, for example a picture of a dog, to ensure the system sends an error message with out crashing and fabricating purchases.
+
 ## Known limitations
 
 - Highlight known system limitations, unhandled edge cases, or boundaries of current capabilities.
 
+- **Image quality:** 
+  The images of the receipts need to be clear. Blurry or unclear images might lead to mistakes like missed items and other errors.
+- **Abbreviations:**
+  Some store abbreviations might be hard for the model to understand.
+- **Local run:**
+  Running the model locally might take a few seconds to read the image.
+
 ## Future improvements
 
 - List planned feature enhancements, architectural refactorings, or future capabilities.
+
+- **Monthly budget:**
+  Allows to add a monthly budget and then gives user a warning when budget is about to be exceeded.
+
+- **Editing:**
+  If AI makes a mistake with pricing, item name or category, manual editing could be useful to fix these mistakes by hand.
