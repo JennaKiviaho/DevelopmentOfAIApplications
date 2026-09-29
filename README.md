@@ -1,20 +1,21 @@
-# Project name
+# Project name: Application for tracking of expenses
 
 Starter template for the **Development of AI Applications** course final group project.
 
 ## Team members
 
+RyhmäRämä
 - Lotta Kauppinen (amk1005174@student.hamk.fi / lotta.kauppinen@student.hamk.fi)
 - Jenna Kiviaho (amk1004342@student.hamk.fi)
-- Marjaana Koski (email@example.com)
-- Jani Laakso (amk1005251@student.hamk.fi)
+- Marjaana Koski (amk1004248@student.hamk.fi / marjaana.koski@student.hamk.fi)
+- Jani Laakso (amk1005251@student.hamk.fi )
 
 ## Problem
 
 ### Intended users
 
 - The target user is someone who wants to track their everyday spending easily. 
-- The app is useful for someone who makes purchases in store or online and are able to get a receipt from the purchase. 
+- The app is useful for someone who makes purchases in store or online and are able to get a receipt from the purchase.
 
 ### Problem statement
 
@@ -53,6 +54,20 @@ Model Client (src/models/model_client.py)
   ↓
 Ollama (Local LLM Server)
 ```
+Another version:
+```text
+User
+  ↓
+Gradio UI (app/ui.py)
+  ↓
+AI Service / Workflow (src/services/ai_service.py)
+  validate → extract → check → categorize → store → summarize
+  ↓                              ↓
+Model Client                 Storage (SQLite /other?)
+(src/models/model_client.py)
+  ↓
+Ollama (Local LLM Server)
+```
 
 > **Core Architectural Rule:** The user interface must NEVER communicate directly with the model client or Ollama. All interactions must pass through the service layer (`ai_service.py`).
 
@@ -75,7 +90,7 @@ Select at least one additional capability to implement for your final project:
 - [ ] Agentic workflow (Model-selected actions based on observations)
 - [x] Memory / Persistent state
 - [x] Multimodal interaction (Text + Images)
-- [ ] Other: ______________________
+- [] Other: ______________________
 
 ### Capability justification
 Explain why the selected capability is useful and necessary for your application's user problem.
