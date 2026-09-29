@@ -7,7 +7,7 @@ Starter template for the **Development of AI Applications** course final group p
 - Lotta Kauppinen (amk1005174@student.hamk.fi / lotta.kauppinen@student.hamk.fi)
 - Jenna Kiviaho (amk1004342@student.hamk.fi)
 - Marjaana Koski (email@example.com)
-- Jani Laakso (email@example.com)
+- Jani Laakso (amk1005251@student.hamk.fi)
 
 ## Problem
 
@@ -168,6 +168,12 @@ Refer to [`evaluation/README.md`](evaluation/README.md) for guidelines on defini
   Some store abbreviations might be hard for the model to understand.
 - **Local run:**
   Running the model locally might take a few seconds to read the image.
+- **Ambiguous items:**
+  Some products can be categorized incorrectly without enough context.
+- **Long receipts:**
+  Very long receipts may exceed the model's context window and get truncated.
+- **Duplicate detection:**
+  The same receipt may be uploaded twice and is not flagged.
 
 ## Future improvements
 
@@ -178,3 +184,12 @@ Refer to [`evaluation/README.md`](evaluation/README.md) for guidelines on defini
 
 - **Editing:**
   If AI makes a mistake with pricing, item name or category, manual editing could be useful to fix these mistakes by hand.
+
+- **Multi-format support:**
+  Accept PDFs and emails bills.
+
+- **Spending insights:**
+  Weekly/monthly summaries with charts and trend analysis.
+
+- **Feedback learning:**
+  Improve categorization over time based on user corrections.
