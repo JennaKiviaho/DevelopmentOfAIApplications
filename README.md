@@ -7,7 +7,6 @@ Starter template for the **Development of AI Applications** course final group p
 RyhmäRämä
 - Lotta Kauppinen (amk1005174@student.hamk.fi / lotta.kauppinen@student.hamk.fi)
 - Jenna Kiviaho (amk1004342@student.hamk.fi)
-- Marjaana Koski (amk1004248@student.hamk.fi / marjaana.koski@student.hamk.fi)
 - Jani Laakso (amk1005251@student.hamk.fi )
 
 ## Problem
