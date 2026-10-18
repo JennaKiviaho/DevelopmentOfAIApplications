@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 import ollama
 from src.config import config
@@ -27,18 +28,51 @@ class OllamaModelClient:
         self._client = ollama.Client(host=self.base_url)
 
     def generate(self, prompt: str) -> str:
-        """
-        Sends a user prompt to local Ollama model and returns generated response text.
-        
-        Raises ModelClientError subclass if connection or execution fails.
-        """
+        """Sends a text prompt to the model and returns the response text."""
         try:
             response = self._client.chat(
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
             )
-            
-            # Standardize extraction from dict or chat response object
+
+            if isinstance(response, dict):
+                return response.get("message", {}).get("content", "")
+            elif hasattr(response, "message") and hasattr(response.message, "content"):
+                return response.message.content
+            return str(response)
+
+        except Exception as err:
+            err_str = str(err).lower()
+            if "connection" in err_str or "connect" in err_str or "refused" in err_str:
+                raise OllamaConnectionError(
+                    f"Failed to connect to Ollama service at {self.base_url}."
+                ) from err
+            elif "not found" in err_str or "404" in err_str:
+                raise ModelNotFoundError(
+                    f"Model '{self.model_name}' is not installed in local Ollama."
+                ) from err
+            else:
+                raise ModelClientError(f"Error communicating with Ollama: {err}") from err
+
+    def generate_from_image(self, prompt: str, image_path: str) -> str:
+        """Sends a prompt and the receipt."""
+
+        # Check that the image file exists
+        if not os.path.exists(image_path):
+            raise ModelClientError(f"Image file not found: {image_path}")
+
+        try:
+            response = self._client.chat(
+                model=self.model_name,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                        "images": [image_path],
+                    }
+                ],
+            )
+
             if isinstance(response, dict):
                 return response.get("message", {}).get("content", "")
             elif hasattr(response, "message") and hasattr(response.message, "content"):

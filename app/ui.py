@@ -1,6 +1,10 @@
 import gradio as gr
-from src.services.ai_service import generate_response
+from src.services.ai_service import generate_response, generate_receipt_response
 
+def analyze_receipt(image_path: str | None) -> str:
+    """Passes the uploaded receipt to the service layer and returns text for the UI."""
+    result = generate_receipt_response(image_path)
+    return result.content
 
 def build_ui() -> gr.Blocks:
     """
