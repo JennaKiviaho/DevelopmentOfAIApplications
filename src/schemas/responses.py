@@ -30,4 +30,5 @@ class ReceiptData(BaseModel):
     store: NonBlank = Field(default="Unknown", description = "Store or restaurant name")
     date: date | None = Field(default=None, description="Receipts date YYYY-MM-DD")
     total: Money = Field(default=Decimal("0.00"), description="Receipts total sum")
+    currency: Literal["EUR", "USD", "GBP", "SEK"] = Field(default="EUR", description="Currency code like EUR, USD, GBP, SEK")
     items: list[ReceiptLineItem] = Field(default_factory=list, max_length=500)
