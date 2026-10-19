@@ -6,7 +6,8 @@ from src.models.model_client import (
     OllamaConnectionError,
     ModelNotFoundError,
 )
-from src.schemas.responses import UserRequest, AIResponse
+from src.schemas.responses import UserRequest, AIResponse, ReceiptData
+from src.capabilities.memory import save_receipt, DuplicateReceiptError
 
 
 class AIService:
@@ -105,6 +106,12 @@ class AIService:
 
         Identify the purchased products, their prices and categories.
 
+        Rules:
+        - Store: Look at the top of the receipt for the store name.
+        - Currency: Default is 'EUR' unless there is clearly 'USD', 'GBD' or 'SEK'.
+        - Date: Return in format YYYY-MM-DD if visible, otherwise NULL.
+        - Total: Look for a total amount at the bottom. If no total sum is explicitly printed, sum up all the prices and return that value. Do not return 0.00 if there are items.
+
         Use these product categories:
         - Food
         - Clothing
@@ -130,20 +137,56 @@ class AIService:
         Return:
         - The category of each product
         - A list of products and their prices
-        - The total amount, if visible
+        - The total amount
         """
 
         try:
             client = self._get_client()
 
-            response_text = client.generate_from_image(
-                prompt=prompt,
-                image_path=image_path,
+            response = client._client.chat(
+                model = client.model_name,
+                messages = [{"role": "user",
+                           "content": prompt,
+                           "images": [str(image_path)]
+                           }],
+                format = ReceiptData.model_json_schema(),
+                options = {"temperature": 0.0},
+                stream = False,
+            )
+
+            raw_text = response.get("message", {}).get("content", "{}")
+            receipt = ReceiptData.model_validate_json(raw_text)
+
+            if not receipt.is_receipt:
+                return AIResponse(
+                    content="Image is not receipt. Upload a clear image of a receipt.",
+                    success=False,
+                    error_message = "Image is not a receipt."
+                )
+
+            try:
+                receipt_id = save_receipt(
+                    receipt = receipt,
+                    source_filename = str(image_path),
+                    raw_text = raw_text,
+                )
+                status = f"Receipt uploaded to database (ID: {receipt_id})."
+            except DuplicateReceiptError as e:
+                status = f"{e}"
+
+            item_lines = "\n".join([f"- {item.name}: {item.price} {receipt.currency} ({item.category})" for item in receipt.items])
+
+            content = (
+                f"{status}\n\n"
+                f"Store: {receipt.store}\n"
+                f"Date: {receipt.date or 'Unknown'}\n"
+                f"Total: {receipt.total} {receipt.currency}\n\n"
+                f"Items: \n{item_lines}"
             )
 
             return AIResponse(
-                content=response_text,
-                success=True,
+                content = content,
+                success = True,
             )
 
         except OllamaConnectionError as err:

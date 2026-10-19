@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Annotated, Literal
 from datetime import date
 from decimal import Decimal
+from typing import Optional
 
 NonBlank = Annotated[str, Field(min_length=1, max_length=500)]
 Money = Annotated[Decimal, Field(ge=0, max_digits=18, decimal_places=2, allow_inf_nan=False)]
@@ -28,7 +29,7 @@ class ReceiptLineItem(BaseModel):
 class ReceiptData(BaseModel):
     is_receipt: bool = Field(description="true if receipt, false if something else like animal or landscape")
     store: NonBlank = Field(default="Unknown", description = "Store or restaurant name")
-    date: date | None = Field(default=None, description="Receipts date YYYY-MM-DD")
-    total: Money = Field(default=Decimal("0.00"), description="Receipts total sum")
+    date: Optional[str] = Field(default=None, description="Receipts date YYYY-MM-DD")
+    total: Money = Field(description="Receipts total sum")
     currency: Literal["EUR", "USD", "GBP", "SEK"] = Field(default="EUR", description="Currency code like EUR, USD, GBP, SEK")
     items: list[ReceiptLineItem] = Field(default_factory=list, max_length=500)

@@ -30,6 +30,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from src.config import config
 from src.schemas.responses import ReceiptData
+from decimal import Decimal
 
 db_path = config.db_path
 
@@ -79,9 +80,12 @@ def save_receipt(receipt: ReceiptData, source_filename: str = "", raw_text: str 
       initialize_database(path)
       with connect(path) as connection, connection:
          connection.execute("BEGIN IMMEDIATE")
+
+         date_val = str(receipt.date) if receipt.date else None
+
          existing = connection.execute(
-               "SELECT id from receipts WHERE store = ? AND date = ? AND total = ? AND currency = ?",
-               (receipt.store, str(receipt.date), str(receipt.total), receipt.currency),
+               "SELECT id from receipts WHERE store = ? AND date IS ? AND total = ? AND currency = ?",
+               (receipt.store, date_val, str(receipt.total), receipt.currency),
          ).fetchone()
          if existing:
             raise DuplicateReceiptError(
@@ -94,7 +98,7 @@ def save_receipt(receipt: ReceiptData, source_filename: str = "", raw_text: str 
             """,
                (
                   receipt.store,
-                  str(receipt.date),
+                  date_val,
                   str(receipt.total),
                   receipt.currency,
                   source_filename,
@@ -130,5 +134,3 @@ def list_receipts(path: Path | str = db_path) -> list[list]:
               )
          ]
       
-
-
