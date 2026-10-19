@@ -26,11 +26,10 @@ Keep memory implementations simple and relevant to the user's workflow needs.
 
 import sqlite3
 from pathlib import Path
-from config import db_path
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from src.config import config
-from src.services.ai_service import ReceiptData
+from src.schemas.responses import ReceiptData
 
 db_path = config.db_path
 
@@ -40,10 +39,11 @@ CREATE TABLE IF NOT EXISTS receipts (
    store TEXT,
    date TEXT,
    total TEXT,
+   currency TEXT NOT NULL DEFAULT 'EUR',
    source_filename TEXT NOT NULL,
    raw_text TEXT NOT NULL,
    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-   UNIQUE(store, date, total)
+   UNIQUE(store, date, total, currency)
 );
 
 CREATE TABLE IF NOT EXISTS receipt_line_items (
@@ -60,7 +60,7 @@ class DuplicateReceiptError(ValueError):
         """A deterministic duplicate, not a model decision."""
 
 @contextmanager
-def connect(path: Path | str = db_path) -> Iterator[sqlite3.Connection]:
+def connect(path: Path | str = db_path) -> Generator[sqlite3.Connection]:
       connection = sqlite3.connect(path, timeout = 10)
       connection.row_factory = sqlite3.Row
       connection.execute("PRAGMA foreign_keys = ON")
@@ -75,27 +75,28 @@ def initialize_database(path: Path | str = db_path) -> None:
       with connect(path) as connection:
          connection.executescript(SCHEMA)
 
-def save_receipt(receipt: ReceiptData, source_filename: str, raw_text: str, path: Path | str = db_path) -> int:
+def save_receipt(receipt: ReceiptData, source_filename: str = "", raw_text: str = "", path: Path | str = db_path) -> int:
       initialize_database(path)
       with connect(path) as connection, connection:
          connection.execute("BEGIN IMMEDIATE")
          existing = connection.execute(
-               "SELECT id from receipts WHERE store = ? AND date = ? AND total = ?",
-               (receipt.store, str(receipt.date), str(receipt.total)),
+               "SELECT id from receipts WHERE store = ? AND date = ? AND total = ? AND currency = ?",
+               (receipt.store, str(receipt.date), str(receipt.total), receipt.currency),
          ).fetchone()
          if existing:
             raise DuplicateReceiptError(
-               f"Receipt from {receipt.store} on {receipt.date} ({receipt.total} €) already exists."
+               f"Receipt from {receipt.store} on {receipt.date} ({receipt.total} {receipt.currency}) already exists."
             )
          cursor = connection.execute(
             """INSERT INTO receipts (
-               store, date, total, source_filename, raw_text)
-               VALUES (?, ?, ?, ?, ?)
+               store, date, total, currency, source_filename, raw_text)
+               VALUES (?, ?, ?, ?, ?, ?)
             """,
                (
                   receipt.store,
                   str(receipt.date),
                   str(receipt.total),
+                  receipt.currency,
                   source_filename,
                   raw_text
                ),
@@ -124,7 +125,7 @@ def list_receipts(path: Path | str = db_path) -> list[list]:
          return [
               list(row)
               for row in connection.execute(
-                  """SELECT id, store, date, total, created_at FROM receipts ORDER BY id DESC
+                  """SELECT id, store, date, total, currency, created_at FROM receipts ORDER BY id DESC
                   """
               )
          ]
