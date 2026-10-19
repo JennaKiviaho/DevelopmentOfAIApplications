@@ -54,7 +54,7 @@ class OllamaModelClient:
             else:
                 raise ModelClientError(f"Error communicating with Ollama: {err}") from err
 
-    def generate_from_image(self, prompt: str, image_path: str) -> str:
+    def generate_from_image(self, prompt: str, image_path: str, schema: Optional[dict] = None) -> str:
         """Sends a prompt and the receipt."""
 
         # Check that the image file exists
@@ -71,6 +71,7 @@ class OllamaModelClient:
                         "images": [image_path],
                     }
                 ],
+                format = schema,
             )
 
             if isinstance(response, dict):

@@ -107,9 +107,9 @@ class AIService:
         Identify the purchased products, their prices and categories.
 
         Rules:
-        - Store: Look at the top of the receipt for the store name.
-        - Currency: Default is 'EUR' unless there is clearly 'USD', 'GBD' or 'SEK'.
-        - Date: Return in format YYYY-MM-DD if visible, otherwise NULL.
+        - Store: Read the business/store name from the top header or logo area (e.g. "Green Supermarket"). Look for title text. If partially obscured, infer the best match. Do not return "Unknown" if readable text exists at the top.
+        - Currency: Default is 'EUR' unless there is clearly 'USD', 'GBD', 'SEK' or other clearly marked currency.
+        - Date: Look for the date (e.g. in DD-MM-YYYY, YYYY-MM-DD) Return in format YYYY-MM-DD if visible, otherwise NULL.
         - Total: Look for a total amount at the bottom. If no total sum is explicitly printed, sum up all the prices and return that value. Do not return 0.00 if there are items.
 
         Use these product categories:
@@ -143,18 +143,12 @@ class AIService:
         try:
             client = self._get_client()
 
-            response = client._client.chat(
-                model = client.model_name,
-                messages = [{"role": "user",
-                           "content": prompt,
-                           "images": [str(image_path)]
-                           }],
-                format = ReceiptData.model_json_schema(),
-                options = {"temperature": 0.0},
-                stream = False,
+            raw_text = client.generate_from_image(
+                prompt = prompt,
+                image_path = str(image_path),
+                schema = ReceiptData.model_json_schema(),
             )
 
-            raw_text = response.get("message", {}).get("content", "{}")
             receipt = ReceiptData.model_validate_json(raw_text)
 
             if not receipt.is_receipt:
