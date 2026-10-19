@@ -21,3 +21,11 @@ ENV/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
