@@ -68,8 +68,14 @@ def build_ui() -> gr.Blocks:
             gr.Markdown("Upload your receipt to analyze the contents.")
             receipt_image = gr.Image(label="Receipt Image", type="filepath")
             analyze_button = gr.Button("Analyze Receipt",variant="primary")
+            cancel_upload_button = gr.Button("Cancel Upload")
+            cancel_analysis_button = gr.Button("Cancel Analysis")
             receipt_output = gr.Textbox(label="Analysis Result", lines=12, interactive=False)
-            analyze_button.click(fn=analyze_receipt, inputs=receipt_image, outputs=receipt_output)
+
+            analyze_event = analyze_button.click(fn=analyze_receipt, inputs=receipt_image, outputs=receipt_output)
+
+            cancel_upload_button.click(fn=lambda:(None, ""), inputs=None, outputs=[receipt_image, receipt_output])
+            cancel_analysis_button.click(fn=lambda: "Analysis cancelled.", inputs=None, outputs=receipt_output, cancels=[analyze_event])
 
         with gr.Tab("My Receipts"):
 
