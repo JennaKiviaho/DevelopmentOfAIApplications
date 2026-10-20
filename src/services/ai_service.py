@@ -8,6 +8,7 @@ from src.models.model_client import (
 )
 from src.schemas.responses import UserRequest, AIResponse, ReceiptData
 from src.capabilities.memory import save_receipt, DuplicateReceiptError
+from src.capabilities.multimodal import analyze_receipt
 
 
 class AIService:
@@ -101,55 +102,13 @@ class AIService:
                 error_message="No receipt was found. Try again.",
             )
 
-        prompt = """
-        Analyze this picture of a receipt.
-
-        Identify the purchased products, their prices and categories.
-
-        Rules:
-        - Store: Read the business/store name from the top header or logo area (e.g. "Green Supermarket"). Look for title text. If partially obscured, infer the best match. Do not return "Unknown" if readable text exists at the top.
-        - Currency: Default is 'EUR' unless there is clearly 'USD', 'GBD', 'SEK' or other clearly marked currency.
-        - Date: Look for the date (e.g. in DD-MM-YYYY, YYYY-MM-DD) Return in format YYYY-MM-DD if visible, otherwise NULL.
-        - Total: Look for a total amount at the bottom. If no total sum is explicitly printed, sum up all the prices and return that value. Do not return 0.00 if there are items.
-
-        Use these product categories:
-        - Food
-        - Clothing
-        - Hygiene
-        - Restaurant
-        - Household
-        - Other
-
-        Instructions:
-        - If the receipt is from a grocery store or supermarket,
-          classify food products as Food.
-        - If the receipt is from a restaurant, cafe or fast-food restaurant,
-          classify the purchases as Restaurant, not Food.
-        - If the receipt is from a clothing store, classify purchases as Clothing.
-        - If the receipt contains hygiene or beauty products,
-          classify them as Hygiene.
-        - If the receipt contains cleaning or household products,
-          classify them as Household.
-        - If a product does not fit any other category, classify it as Other.
-        - If a product or price is unclear, state that it is unclear
-          instead of guessing.
-
-        Return:
-        - The category of each product
-        - A list of products and their prices
-        - The total amount
-        """
-
         try:
             client = self._get_client()
 
-            raw_text = client.generate_from_image(
-                prompt = prompt,
-                image_path = str(image_path),
-                schema = ReceiptData.model_json_schema(),
+            receipt, raw_text = analyze_receipt(
+                image_path=image_path,
+                client=client,
             )
-
-            receipt = ReceiptData.model_validate_json(raw_text)
 
             if not receipt.is_receipt:
                 return AIResponse(
