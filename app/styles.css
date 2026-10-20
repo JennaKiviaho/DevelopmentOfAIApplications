@@ -1,0 +1,124 @@
+/*SmartReceipt*/
+
+:root {
+    --forest: #164B35;
+    --forest-dark: #103D2B;
+    --mint: #B8EACB;
+    --mint-light: #E8F7EE;
+    --background: #F3F9F5;
+    --text: #183D2B;
+}
+
+/*Main App*/
+
+.gradio-container {
+    background: var(--background) !important;
+    color: var(--text);
+    font-family: "Inter", Arial, sans-serif;
+}
+
+/*Main page heading*/
+
+.hero {
+    background: var(--forest);
+    border-radius: 22px;
+    padding: 55px 30px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    color: white !important;
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    color: var(--mint) !important;
+    font-size: 17px;
+}
+
+/*Dashboard navigation cards*/
+
+.dashboard-button {
+    background: white !important;
+    color: var(--forest) !important;
+    border: 2px solid var(--mint) !important;
+    border-radius: 18px !important;
+    min-height: 140px;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease;
+}
+
+.dashboard-button:hover {
+    background: var(--mint) !important;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px #164B3520;
+}
+
+/*Action buttons*/
+
+.action-button {
+    background: var(--forest) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+}
+
+.action-button:hover {
+    background: var(--forest-dark) !important;
+}
+
+/*Back navigation*/
+
+.back-button {
+    background: var(--mint-light) !important;
+    color: var(--forest) !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--mint) !important;
+}
+
+/*Receipt upload window*/
+
+#receipt-upload {
+    background: var(--mint-light) !important;
+    border: 2px solid var(--mint) !important;
+    border-radius: 16px !important;
+
+    --block-background-fill: var(--mint-light);
+    --input-background-fill: var(--mint-light);
+}
+
+/*Inner upload area*/
+
+#receipt-upload .image-container,
+#receipt-upload .upload-container {
+    background: var(--mint-light) !important;
+}
+
+/*Analysis result window*/
+
+#receipt-analysis {
+    background: var(--mint-light) !important;
+    border: 2px solid var(--mint) !important;
+    border-radius: 16px !important;
+
+    --block-background-fill: var(--mint-light);
+    --input-background-fill: var(--mint-light);
+}
+
+/*Text area inside analysis result*/
+
+#receipt-analysis textarea {
+    background: var(--mint-light) !important;
+    color: var(--forest) !important;
+    border-radius: 12px !important;
+}
+
+/*Component labels*/
+
+#receipt-upload label,
+#receipt-analysis label {
+    color: var(--forest) !important;
+}
