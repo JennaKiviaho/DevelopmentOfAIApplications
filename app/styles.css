@@ -17,6 +17,13 @@
     font-family: "Inter", Arial, sans-serif;
 }
 
+.gradio-container h1,
+.gradio-container h2,
+.gradio-container h3,
+.gradio-container p {
+    color: var(--forest-dark) !important;
+}
+
 /*Main page heading*/
 
 .hero {
@@ -121,4 +128,76 @@
 #receipt-upload label,
 #receipt-analysis label {
     color: var(--forest) !important;
+}
+
+/*Additional instructions text field and box*/
+
+/*Header of the box*/
+#user_text_box label span {
+    color: var(--forest-dark) !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    padding-left: 0.5%;
+}
+
+/*text area*/
+#user_text_box textarea {
+    background-color: white !important;
+    color: var(--text) !important;
+    border: 2px solid var(--mint) !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    font-size: 0.95rem !important;
+}
+
+#user_text_box textarea:focus {
+    border-color: var(--forest) !important;
+    box-shadow: 0 0 0 2px var(--mint-light) !important;
+    outline: none !important;
+}
+
+/*around the box*/
+#user_text_box {
+    background: var(--mint-light) !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    --block-background-fill: var(--mint-light) !important;
+    --input-background-fill: var(--mint-light) !important;
+}
+
+/*Summary table and output*/
+
+/* Table and background*/
+.tables {
+    color: var(--forest-dark) !important;
+    background: var(--mint-light) !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    --block-background-fill: var(--mint-light) !important;
+    --input-background-fill: var(--mint-light) !important;
+}
+
+/*Tables black bar to green and text to white*/
+.tables th,
+.tables .thead th,
+.tables table thead tr th {
+    background-color: var(--forest) !important;
+    background: var(--forest) !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Texts to green on summary page*/
+#summary-output,
+#summary-output * {
+    color: var(--forest-dark) !important;
+}
+
+#summary_output h2,
+#summary_output h3 {
+    color: var(--forest-dark) !important;
+    font-weight: 700 !important;
+    margin-top: 15px !important;
 }

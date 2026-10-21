@@ -98,7 +98,7 @@ def build_ui() -> gr.Blocks:
 
             receipt_image = gr.Image(label="Receipt Image",type="filepath",elem_id="receipt-upload")
 
-            user_text = gr.Textbox(label="Additional Instructions / Notes (Optional)", placeholder="e.g. 'Categorize all items as Household' or 'Currency is USD'", lines=2,)
+            user_text = gr.Textbox(label="Additional Instructions / Notes (Optional)", placeholder="e.g. 'Categorize all items as Household' or 'Currency is USD'", lines=2, elem_id="user_text_box")
 
             analyze_button = gr.Button("Analyze Receipt",variant="primary", elem_classes=["action-button"])
 
@@ -110,7 +110,7 @@ def build_ui() -> gr.Blocks:
 
             analyze_event = analyze_button.click(fn=analyze_receipt,inputs=[receipt_image, user_text] ,outputs=receipt_output)
 
-            cancel_upload_button.click(fn=lambda: (None, ""),inputs=None,outputs=[receipt_image, receipt_output, user_text])
+            cancel_upload_button.click(fn=lambda: (None, ""),inputs=None,outputs=[receipt_image, receipt_output])
             cancel_analysis_button.click(fn=lambda: "Analysis cancelled.",inputs=None,outputs=receipt_output,cancels=[analyze_event])
 
         # My Receipts - page
@@ -124,7 +124,7 @@ def build_ui() -> gr.Blocks:
             refresh_button = gr.Button("Refresh Receipts",elem_classes=["action-button"])
 
             receipts_table = gr.Dataframe(
-                headers=["ID","Store","Date","Total","Currency","Created At"],label="Saved Receipts",interactive=False,)
+                headers=["ID","Store","Date","Total","Currency","Created At"],label="Saved Receipts",interactive=False, elem_classes=["tables"])
 
             refresh_button.click(fn=refresh_receipts,inputs=None,outputs=receipts_table)
 
@@ -137,10 +137,10 @@ def build_ui() -> gr.Blocks:
             gr.Markdown("Review your spending by product category.")
 
             summary_button = gr.Button("Update Summary",variant="primary",elem_classes=["action-button"])
-            summary_output = gr.Markdown()
+            summary_output = gr.Markdown(elem_id="summary-output")
 
             category_table = gr.Dataframe(
-                headers=["Category","Amount","Percentage"],label="Spending by Category",interactive=False)
+                headers=["Category","Amount","Percentage"],label="Spending by Category",interactive=False, elem_classes=["tables"])
 
             summary_button.click(fn=format_summary,inputs=None,outputs=[summary_output, category_table])
 
