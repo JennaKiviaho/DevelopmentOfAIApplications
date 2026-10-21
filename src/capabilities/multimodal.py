@@ -36,8 +36,8 @@ def analyze_receipt(image_path: str, client: OllamaModelClient):
 
         Rules:
         - Store: Read the business/store name from the top header or logo area (e.g. "Green Supermarket"). Look for title text. If partially obscured, infer the best match. Do not return "Unknown" if readable text exists at the top.
-        - Currency: Default is 'EUR' unless there is clearly 'USD', 'GBD', 'SEK' or other clearly marked currency.
-        - Date: Look for the date (e.g. in DD-MM-YYYY, YYYY-MM-DD) Return in format YYYY-MM-DD if visible, otherwise NULL.
+        - Currency: Check for currency signs. ($ -> USD, £ -> GBP, kr -> SEK, € -> EUR). Default is 'EUR' only if no symbol or code is visible.
+        - Date: Look for dates in any format like MM-DD-YYYY, DD/MM/YYYY, YYYY-MM-DD, or DD.MM.YYYY. Always convert and return it in format: YYYY-MM-DD. If completely unreadable, return null.
         - Total: Look for a total amount at the bottom. If no total sum is explicitly printed, sum up all the prices and return that value. Do not return 0.00 if there are items.
 
         Use these product categories:
