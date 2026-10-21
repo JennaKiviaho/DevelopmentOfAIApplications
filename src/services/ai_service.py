@@ -92,7 +92,7 @@ class AIService:
                 error_message=str(err),
             )
 
-    def process_receipt(self, image_path: str) -> AIResponse:
+    def process_receipt(self, image_path: str, user_instructions: Optional[str] = None) -> AIResponse:
         """Analyzes a receipt image and identifies products, prices and categories."""
 
         if not image_path or not image_path.strip():
@@ -107,6 +107,7 @@ class AIService:
 
             receipt, raw_text = analyze_receipt(
                 image_path=image_path,
+                user_instructions=user_instructions,
                 client=client,
             )
 
@@ -193,9 +194,10 @@ def generate_response(
 
 def generate_receipt_response(
     image_path: str,
+    user_instructions: Optional[str] = None,
     service: Optional[AIService] = None,
 ) -> AIResponse:
     """Entry point for processing receipt images from the UI."""
 
     active_service = service or AIService()
-    return active_service.process_receipt(image_path)
+    return active_service.process_receipt(image_path, user_instructions)

@@ -2,11 +2,11 @@ import gradio as gr
 from src.services.ai_service import generate_response, generate_receipt_response
 from src.capabilities.memory import list_receipts, get_summary
 
-def analyze_receipt(image_path):
+def analyze_receipt(image_path, user_text = None):
     """Analyze an uploaded receipt image."""
     if image_path is None:
         return "Please upload a receipt first."
-    result = generate_receipt_response(image_path)
+    result = generate_receipt_response(image_path, user_instructions = user_text)
     return result.content
 
 def refresh_receipts():
@@ -98,6 +98,8 @@ def build_ui() -> gr.Blocks:
 
             receipt_image = gr.Image(label="Receipt Image",type="filepath",elem_id="receipt-upload")
 
+            user_text = gr.Textbox(label="Additional Instructions / Notes (Optional)", placeholder="e.g. 'Categorize all items as Household' or 'Currency is USD'", lines=2,)
+
             analyze_button = gr.Button("Analyze Receipt",variant="primary", elem_classes=["action-button"])
 
             with gr.Row():
@@ -106,9 +108,9 @@ def build_ui() -> gr.Blocks:
 
             receipt_output = gr.Textbox(label="Analysis Result",lines=12,interactive=False,elem_id="receipt-analysis")
 
-            analyze_event = analyze_button.click(fn=analyze_receipt,inputs=receipt_image,outputs=receipt_output)
+            analyze_event = analyze_button.click(fn=analyze_receipt,inputs=[receipt_image, user_text] ,outputs=receipt_output)
 
-            cancel_upload_button.click(fn=lambda: (None, ""),inputs=None,outputs=[receipt_image, receipt_output])
+            cancel_upload_button.click(fn=lambda: (None, ""),inputs=None,outputs=[receipt_image, receipt_output, user_text])
             cancel_analysis_button.click(fn=lambda: "Analysis cancelled.",inputs=None,outputs=receipt_output,cancels=[analyze_event])
 
         # My Receipts - page

@@ -24,9 +24,10 @@ Verify that your local Ollama model explicitly supports multimodal inputs before
 
 from src.models.model_client import OllamaModelClient
 from src.schemas.responses import ReceiptData
+from typing import Optional
 
 
-def analyze_receipt(image_path: str, client: OllamaModelClient):
+def analyze_receipt(image_path: str, client: OllamaModelClient, user_instructions: Optional[str] = None):
     """Analyzes a receipt image and identifies products, prices and categories."""
 
     prompt = """
@@ -67,6 +68,8 @@ def analyze_receipt(image_path: str, client: OllamaModelClient):
         - A list of products and their prices
         - The total amount
         """
+    if user_instructions and user_instructions.strip():
+        prompt += f"\n\nAdditional User Instructions:\n{user_instructions.strip()}"
 
     raw_text = client.generate_from_image(
         prompt = prompt,
