@@ -123,6 +123,12 @@
     border-radius: 12px !important;
 }
 
+#receipt-analysis label * {
+    color: var(--forest-dark) !important;
+    font-weight: bold;
+    font-size: 15px;
+}
+
 /*Component labels*/
 
 #receipt-upload label,

@@ -37,9 +37,10 @@ def analyze_receipt(image_path: str, client: OllamaModelClient, user_instruction
 
         Rules:
         - Store: Read the business/store name from the top header or logo area (e.g. "Green Supermarket"). Look for title text. If partially obscured, infer the best match. Do not return "Unknown" if readable text exists at the top.
-        - Currency: Check for currency signs. ($ -> USD, £ -> GBP, kr -> SEK, € -> EUR). Default is 'EUR' only if no symbol or code is visible.
+        - Currency: Check for currency signs (€, EUR, $, £, kr). Default is 'EUR'.
         - Date: Look for dates in any format like MM-DD-YYYY, DD/MM/YYYY, YYYY-MM-DD, or DD.MM.YYYY. Always convert and return it in format: YYYY-MM-DD. If completely unreadable, return null.
         - Total: Look for a total amount at the bottom. If no total sum is explicitly printed, sum up all the prices and return that value. Do not return 0.00 if there are items.
+        - Items: Include only actual purchased products. Do not include payment methods like Mastercard and Visa or VAT and ALV.
 
         Use these product categories:
         - Food
