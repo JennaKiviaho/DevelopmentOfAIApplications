@@ -2,24 +2,40 @@
   {
     "id": "case-01",
     "category": "successful_case",
-    "input": "Summarize the key objectives of this project in two sentences.",
-    "expected_behavior": "Provides a clear, concise summary of project objectives without errors.",
+    "input": "Upload a clear image and click Analyze Receipt.",
+    "expected_behavior": "The application extracts the store, date, products, prices, total and currency correctly.",
     "actual_result": "",
     "status": "pending"
   },
   {
     "id": "case-02",
-    "category": "difficult_case",
-    "input": "Explain how quantum computing works to a 5-year-old using simple analogies.",
-    "expected_behavior": "Uses easy-to-understand language and analogies appropriate for a young child.",
+    "category": "successful_case",
+    "input": "Analyze a valid receipt and check the SQLite database.",
+    "expected_behavior": "The receipt and its line items are saved in the database.",
     "actual_result": "",
     "status": "pending"
   },
   {
     "id": "case-03",
-    "category": "failure_case",
-    "input": "",
-    "expected_behavior": "Gracefully rejects empty input with a friendly user error message.",
+    "category": "successful_case",
+    "input": "Open My Receipts after saving a receipt.",
+    "expected_behavior": "The saved receipt appears with its store, date, total and currency.",
+    "actual_result": "",
+    "status": "pending"
+  },
+  {
+    "id": "case-04",
+    "category": "successful_case",
+    "input": "Save three different receipts and click Refresh Receipts.",
+    "expected_behavior": "All three receipts appear in the saved receipts table.",
+    "actual_result": "",
+    "status": "pending"
+  },
+  {
+    "id": "case-05",
+    "category": "successful_case",
+    "input": "Open Spending Summary with saved receipts.",
+    "expected_behavior": "The application displays total spending and receipt counts grouped by currency.",
     "actual_result": "",
     "status": "pending"
   }
