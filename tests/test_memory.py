@@ -1,6 +1,5 @@
 """ This file tests SQLite database and functionalities.
     tmp_path (a built-in pytest feature) is used to create a temporary database file in order not to mess up real data.
-    
 """
 
 import pytest
