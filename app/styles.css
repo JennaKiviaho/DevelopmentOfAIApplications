@@ -132,7 +132,7 @@
 /*Text area inside analysis result*/
 
 #receipt-analysis textarea {
-    background: var(--mint-light) !important;
+    background: var(--mint-medium) !important;
     color: var(--forest) !important;
     border-radius: 12px !important;
 }
