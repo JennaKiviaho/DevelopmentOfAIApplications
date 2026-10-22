@@ -224,3 +224,21 @@
     font-weight: 700 !important;
     margin-top: 15px !important;
 }
+
+/*Spending Summary category cards*/
+
+.category-card {
+    background: #24563D !important;
+    color: white !important;
+    border: 2px solid #164B35 !important;
+    border-radius: 16px !important;
+    min-height: 120px;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    transition: 0.2s;
+}
+
+.category-card:hover {
+    background: #164B35 !important;
+    transform: translateY(-3px);
+}

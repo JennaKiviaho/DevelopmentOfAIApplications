@@ -1,6 +1,6 @@
 import gradio as gr
 from src.services.ai_service import generate_response, generate_receipt_response
-from src.capabilities.memory import list_receipts, get_summary
+from src.capabilities.memory import list_receipts, get_summary, get_category_purchases
 from decimal import Decimal
 
 def analyze_receipt(image_path, user_text = None):
@@ -74,6 +74,25 @@ def format_summary():
     except Exception as err:
         print(f"Could not create spending summary: {err}")
         return "Could not load the spending summary.", []
+
+def summary_text():
+    text, _ = format_summary()
+    return text
+    
+def show_category(category, currency):
+    """Show purchases from a selected category."""
+    try:
+        purchases = get_category_purchases(category, currency)
+
+        return (
+            f"### {category} ({currency})",
+            purchases
+        )
+
+    except Exception as err:
+        print(f"Could not load category: {err}")
+        return "Could not load purchases.", []
+    
     
 def navigate(page):
     """Show the selected application page."""
@@ -158,28 +177,43 @@ def build_ui() -> gr.Blocks:
             summary_back = gr.Button("Back to Home",elem_classes=["back-button"])
 
             gr.Markdown("## Spending Summary")
-            gr.Markdown("Review your spending by product category.")
+            gr.Markdown("Select a category to view your purchases.")
 
-            summary_button = gr.Button("Update Summary",variant="primary",elem_classes=["action-button"])
-            summary_output = gr.Markdown(elem_id="summary-output")
+            summary_button = gr.Button("Update Summary",elem_classes=["action-button"])
+            summary_output = gr.Markdown()
 
-            category_table = gr.Dataframe(
-                headers=["Category","Amount","Percentage"],label="Spending by Category",interactive=False, elem_classes=["tables"])
+            currency_choice = gr.Dropdown(choices=["EUR", "USD"],value="EUR",label="Currency")
 
-            summary_button.click(fn=format_summary,inputs=None,outputs=[summary_output, category_table])
+            gr.Markdown("### Categories")
+
+            categories = ["Food","Clothing","Hygiene","Restaurant","Household","Other"]
+            category_buttons = []
+
+            with gr.Row():
+                for category in categories:
+                    button = gr.Button(category,elem_classes=["category-card"],min_width=140)
+                    category_buttons.append(button)
+
+            category_title = gr.Markdown()
+
+            category_table = gr.Dataframe(headers=["Store", "Date", "Product", "Price"],interactive=False,elem_classes=["tables"])
+
+            for category, button in zip(categories, category_buttons):
+                button.click(fn=lambda currency, c=category:show_category(c, currency),inputs=[currency_choice],outputs=[category_title, category_table])
+            summary_button.click(fn=summary_text,outputs=summary_output)
 
         # Navigation
         pages = [home_page,upload_page,receipts_page,summary_page]
 
         upload_nav.click(fn=lambda: navigate("upload"),outputs=pages)
         receipts_nav.click(fn=lambda: navigate("receipts"),outputs=pages).then(fn=refresh_receipts,outputs=receipts_table)
-        summary_nav.click(fn=lambda: navigate("summary"),outputs=pages).then(fn=format_summary,outputs=[summary_output, category_table])
+        summary_nav.click(fn=lambda: navigate("summary"),outputs=pages).then(fn=summary_text,outputs=summary_output)
 
         for back_button in [upload_back,receipts_back,summary_back]:
             back_button.click(fn=lambda: navigate("home"),outputs=pages)
 
         # Load the current database information when the app opens.
         demo.load(fn=refresh_receipts,inputs=None,outputs=receipts_table,)
-        demo.load(fn=format_summary,inputs=None,outputs=[summary_output,category_table,])
+        demo.load(fn=summary_text,outputs=summary_output)
 
     return demo

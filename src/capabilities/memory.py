@@ -243,3 +243,23 @@ def get_summary(start_date: str | None = None, end_date: str | None = None, path
         "start_date": start_date,
         "end_date": end_date,
     }
+
+def get_category_purchases(category, currency, path=db_path):
+    """Get purchases from a category."""
+
+    initialize_database(path)
+
+    with connect(path) as connection:
+        rows = connection.execute(
+            """
+            SELECT r.store, r.date, li.name, li.price
+            FROM receipt_line_items li
+            JOIN receipts r ON r.id = li.receipt_id
+            WHERE li.category = ?
+              AND r.currency = ?
+            ORDER BY r.date DESC
+            """,
+            (category, currency)
+        ).fetchall()
+
+    return [list(row) for row in rows]
