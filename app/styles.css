@@ -5,6 +5,7 @@
     --forest-dark: #103D2B;
     --mint: #B8EACB;
     --mint-light: #E8F7EE;
+    --mint-medium: #24563D;
     --background: #F3F9F5;
     --text: #183D2B;
 }
@@ -89,30 +90,43 @@
 /*Receipt upload window*/
 
 #receipt-upload {
-    background: var(--mint-light) !important;
-    border: 2px solid var(--mint) !important;
+    background: var(--mint-medium) !important;
+    border: 2px solid var(--forest) !important;
     border-radius: 16px !important;
 
-    --block-background-fill: var(--mint-light);
-    --input-background-fill: var(--mint-light);
+    --block-background-fill: var(--mint-medium);
+    --input-background-fill: var(--mint-medium);
 }
 
 /*Inner upload area*/
 
 #receipt-upload .image-container,
-#receipt-upload .upload-container {
-    background: var(--mint-light) !important;
+#receipt-upload .upload-container,
+#receipt-upload .wrap {
+    background: var(--mint-medium) !important;
 }
 
 /*Analysis result window*/
 
 #receipt-analysis {
-    background: var(--mint-light) !important;
-    border: 2px solid var(--mint) !important;
+    background: var(--mint-medium) !important;
+    border: 2px solid var(--forest) !important;
     border-radius: 16px !important;
 
-    --block-background-fill: var(--mint-light);
-    --input-background-fill: var(--mint-light);
+    --block-background-fill: var(--mint-medium);
+    --input-background-fill: var(--mint-medium);
+}
+
+/*Text area inside analysis result*/
+
+#receipt-analysis textarea {
+    background: var(--mint-medium) !important;
+    color: white !important;
+    border-radius: 12px !important;
+}
+
+#receipt-analysis .wrap {
+    background: var(--mint-medium) !important;
 }
 
 /*Text area inside analysis result*/
@@ -132,8 +146,11 @@
 /*Component labels*/
 
 #receipt-upload label,
-#receipt-analysis label {
-    color: var(--forest) !important;
+#receipt-upload label *,
+#receipt-analysis label,
+#receipt-analysis label * {
+    color: white !important;
+    font-weight: 600 !important;
 }
 
 /*Additional instructions text field and box*/

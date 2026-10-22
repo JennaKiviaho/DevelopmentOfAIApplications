@@ -141,95 +141,105 @@ def get_summary(start_date: str | None = None, end_date: str | None = None, path
     params = []
 
     if start_date:
-        conditions.append("r.date >= ?")
+        conditions.append("date >= ?")
         params.append(start_date)
 
     if end_date:
-        conditions.append("r.date <= ?")
+        conditions.append("date <= ?")
         params.append(end_date)
 
     where_condition = (
         "WHERE " + " AND ".join(conditions)
-        if conditions
-        else ""
+        if conditions else ""
     )
 
     with connect(path) as connection:
-        rows = connection.execute(
+        receipts = connection.execute(
             f"""
-            SELECT
-                li.category,
-                li.price,
-                r.currency
-            FROM receipt_line_items li
-            JOIN receipts r ON r.id = li.receipt_id
+            SELECT id, total, currency
+            FROM receipts
             {where_condition}
-            ORDER BY li.category
             """,
             params,
         ).fetchall()
 
-        receipt_conditions = []
-        receipt_params = []
+        receipt_ids = [row["id"] for row in receipts]
 
-        if start_date:
-            receipt_conditions.append("date >= ?")
-            receipt_params.append(start_date)
+        if receipt_ids:
+            placeholders = ",".join("?" for _ in receipt_ids)
+            items = connection.execute(
+                f"""
+                SELECT r.currency, li.category, li.price
+                FROM receipt_line_items li
+                JOIN receipts r ON r.id = li.receipt_id
+                WHERE li.receipt_id IN ({placeholders})
+                """,
+                receipt_ids,
+            ).fetchall()
+        else:
+            items = []
 
-        if end_date:
-            receipt_conditions.append("date <= ?")
-            receipt_params.append(end_date)
+    summaries = {}
 
-        receipt_where = (
-            "WHERE " + " AND ".join(receipt_conditions)
-            if receipt_conditions
-            else ""
+    for receipt in receipts:
+        currency = receipt["currency"]
+
+        if currency not in summaries:
+            summaries[currency] = {
+                "total_spending": Decimal("0"),
+                "receipt_count": 0,
+                "category_totals": {},
+            }
+
+        summaries[currency]["total_spending"] += Decimal(
+            receipt["total"]
+        )
+        summaries[currency]["receipt_count"] += 1
+
+    for item in items:
+        currency = item["currency"]
+        category = item["category"] or "Uncategorized"
+        price = Decimal(item["price"])
+
+        category_totals = summaries[currency]["category_totals"]
+
+        category_totals[category] = (
+            category_totals.get(category, Decimal("0")) + price
         )
 
-        receipt_count = connection.execute(
-            f"SELECT COUNT(*) FROM receipts {receipt_where}",
-            receipt_params,
-        ).fetchone()[0]
+    results = []
 
-    category_totals = {}
-    currencies = set()
+    for currency, data in sorted(summaries.items()):
+        total = data["total_spending"]
 
-    for row in rows:
-        category = row["category"] or "Uncategorized"
-        price = Decimal(row["price"])
-        currency = row["currency"]
+        categories = [
+            {
+                "category": category,
+                "total": amount,
+                "percentage": (
+                    (amount / total * 100).quantize(
+                        Decimal("0.1")
+                    )
+                    if total else Decimal("0")
+                ),
+            }
+            for category, amount in data["category_totals"].items()
+        ]
 
-        category_totals.setdefault(category, Decimal("0"))
-        category_totals[category] += price
-        currencies.add(currency)
-
-    if len(currencies) > 1:
-        raise ValueError(
-            "Cannot combine different currencies into one summary."
+        categories.sort(
+            key=lambda item: item["total"],
+            reverse=True
         )
 
-    currency = next(iter(currencies), "EUR")
-    total = sum(category_totals.values(), Decimal("0"))
-
-    categories = [
-        {
-            "category": category,
-            "total": amount,
-            "percentage": (
-                (amount / total * 100).quantize(Decimal("0.1"))
-                if total else Decimal("0")
-            ),
-        }
-        for category, amount in category_totals.items()
-    ]
-
-    categories.sort(key=lambda item: item["total"], reverse=True)
+        results.append({
+            "currency": currency,
+            "total_spending": total,
+            "receipt_count": data["receipt_count"],
+            "categories": categories,
+        })
 
     return {
-        "total_spending": total,
-        "currency": currency,
-        "receipt_count": receipt_count,
-        "categories": categories,
+        "currencies": results,
         "start_date": start_date,
         "end_date": end_date,
     }

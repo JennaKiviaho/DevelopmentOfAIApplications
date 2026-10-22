@@ -1,6 +1,7 @@
 import gradio as gr
 from src.services.ai_service import generate_response, generate_receipt_response
 from src.capabilities.memory import list_receipts, get_summary
+from decimal import Decimal
 
 def analyze_receipt(image_path, user_text = None):
     """Analyze an uploaded receipt image."""
@@ -18,38 +19,61 @@ def refresh_receipts():
         return []
 
 def format_summary():
-    """Create a readable spending summary and category table."""
+    """Create a spending summary grouped by currency."""
     try:
         summary = get_summary()
+        currencies = summary["currencies"]
 
-        total = summary["total_spending"]
-        currency = summary["currency"]
-        receipt_count = summary["receipt_count"]
+        if not currencies:
+            return (
+                "## Spending Overview\n\n"
+                "No receipts have been saved yet.",
+                []
+            )
 
-        text = (
-            "## Spending Overview\n\n"
-            f"**Total spending:** {total:.2f} {currency}\n\n"
-            f"**Saved receipts:** {receipt_count}\n\n"
-            "### Spending by category\n"
-        )
+        text = "## Spending Overview\n\n"
+        category_rows = []
 
-        categories = []
+        for currency_data in currencies:
+            currency = currency_data["currency"]
+            total = currency_data["total_spending"]
+            receipt_count = currency_data["receipt_count"]
 
-        for item in summary["categories"]:
-            categories.append([
-                item["category"],
-                f'{item["total"]:.2f} {currency}',
-                f'{item["percentage"]}%'
-            ])
+            text += (
+                f"### {currency}\n\n"
+                f"**Total spending:** {total:.2f} {currency}\n\n"
+                f"**Saved receipts:** {receipt_count}\n\n"
+            )
 
-        if not categories:
-            text += "\nNo purchases have been saved yet."
+            categories = currency_data["categories"]
 
-        return text, categories
+            if not categories:
+                text += "No categorized purchases available.\n\n"
+                continue
+
+            category_total = sum(
+                (item["total"] for item in categories),
+                Decimal("0")
+            )
+
+            if category_total != total:
+                text += (
+                    "**Note:** Categorized item totals do not "
+                    "match receipt totals.\n\n"
+                )
+
+            for item in categories:
+                category_rows.append([
+                    f'{item["category"]} ({currency})',
+                    f'{item["total"]:.2f} {currency}',
+                    f'{item["percentage"]}%'
+                ])
+
+        return text, category_rows
 
     except Exception as err:
         print(f"Could not create spending summary: {err}")
-        return ("Could not load the spending summary.",[])
+        return "Could not load the spending summary.", []
     
 def navigate(page):
     """Show the selected application page."""
@@ -103,8 +127,8 @@ def build_ui() -> gr.Blocks:
             analyze_button = gr.Button("Analyze Receipt",variant="primary", elem_classes=["action-button"])
 
             with gr.Row():
-                cancel_upload_button = gr.Button("Cancel Upload")
-                cancel_analysis_button = gr.Button("Cancel Analysis")
+                cancel_upload_button = gr.Button("Cancel Upload", elem_classes=["action-button"])
+                cancel_analysis_button = gr.Button("Cancel Analysis", elem_classes=["action-button"])
 
             receipt_output = gr.Textbox(label="Analysis Result",lines=12,interactive=False,elem_id="receipt-analysis")
 
