@@ -53,7 +53,7 @@ def test_analyze_receipt_successful():
     assert call_args["image_path"] == "dummy_image.jpg"
 
 
-# CASE-13: Verify that if the AI hallucinates invalid JSON, a Pydantic ValidationError is raised.
+# CASE-16: Verify that if the AI hallucinates invalid JSON, a Pydantic ValidationError is raised.
 def test_analyze_receipt_invalid_ai_json():
     mock_client = MagicMock()
     # Missing required fields (like 'items' or 'total') or malformed JSON
@@ -63,7 +63,7 @@ def test_analyze_receipt_invalid_ai_json():
         analyze_receipt("image.jpg", mock_client)
 
 
-# CASE-14: Verify that Ollama errors propagate up to the UI layer correctly.
+# CASE-17: Verify that Ollama errors propagate up to the UI layer correctly.
 def test_analyze_receipt_handles_model_client_error():
     mock_client = MagicMock()
     mock_client.generate_from_image.side_effect = OllamaConnectionError("Connection refused")
