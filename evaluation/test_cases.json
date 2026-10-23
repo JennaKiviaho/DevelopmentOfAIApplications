@@ -107,4 +107,22 @@
     "actual_result": "",
     "status": "pending"
   }
+
+    {
+    "id": "case-13",
+    "category": "failure_case",
+    "input": "Send an image to analyze_receipt where the AI model returns malformed/invalid JSON (e.g. '{\"store\": \"THE BISTRO\"}' with missing required fields such as 'items' or 'total').",
+    "expected_behavior": "The model's invalid JSON output fails validation against the response schema, and a Pydantic ValidationError is raised instead of silently accepting incomplete data.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-14",
+    "category": "failure_case",
+    "input": "Send an image to analyze_receipt where the underlying model client (Ollama) raises an OllamaConnectionError('Connection refused').",
+    "expected_behavior": "The Ollama connection error propagates up through analyze_receipt to the UI layer, allowing the application to surface a clear model-unavailable error to the user rather than crashing or swallowing the exception.",
+    "actual_result": "",
+    "status": "pending"
+  }
 ]
