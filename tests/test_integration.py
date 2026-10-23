@@ -133,3 +133,25 @@ def test_receipt_missing_date(client):
     )
     # Based on your colleague's manual test, the total was 27.35
     assert receipt.total == Decimal("27.35")
+
+
+
+# CASE-14: Extremely blurred or barely readable image of a receipt
+# extremely blurred receipt should fail gracefully (not crash)
+@pytest.mark.integration
+def test_extremely_blurred_receipt(client):
+
+    from pydantic import ValidationError
+    
+    # We expect the model to hallucinate or output invalid JSON on a 
+    # heavy blur. If it magically succeeds, that's fine too, but it should 
+    # NOT crash with a random Python error.
+    try:
+        receipt, raw_text = analyze_receipt(FIXTURES / "extremely_blurred_receipt.jpg", client)
+        # If it did parse, it should at least be a valid ReceiptData object
+        assert receipt.is_receipt is True or receipt.is_receipt is False
+    except ValidationError:
+        # This is the expected path: the model failed, Pydantic caught it.
+        pass
+    except Exception as e:
+        pytest.fail(f"analyze_receipt crashed with an unexpected error: {type(e).__name__}: {e}")
