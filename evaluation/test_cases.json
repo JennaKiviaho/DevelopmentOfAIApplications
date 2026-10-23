@@ -122,8 +122,8 @@
     "category": "failure_case",
     "input": "Extremely blurred or barely readable image of a receipt.",
     "expected_behavior": "The application should not crash and catch parsing failures and display a user friendly error message.",
-    "actual_result": "",
-    "status": "pending"
+    "actual_result": "The Application did not crash but returned a generic error message 'An unexpected error occurred during receipt analysis' instead of specifying why the analysis failed.",
+    "status": "partial"
   },
 
   {
