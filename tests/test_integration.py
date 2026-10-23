@@ -155,3 +155,28 @@ def test_extremely_blurred_receipt(client):
         pass
     except Exception as e:
         pytest.fail(f"analyze_receipt crashed with an unexpected error: {type(e).__name__}: {e}")
+
+
+
+# CASE-15: Uploading an image of a receipt and giving user instructions 'Currency is EUR'.
+# custom user instruction overrides currency
+
+@pytest.mark.integration
+def test_custom_instruction_overrides_currency(client):
+    """case-15: instruct the model to use EUR. It should extract the items
+    as-is but change the currency to EUR (even though the receipt is in USD)."""
+    receipt, raw_text = analyze_receipt(
+        FIXTURES / "harbor_lane_cafe.jpg",
+        client,
+        user_instructions="Currency is EUR",
+    )
+
+    assert receipt.is_receipt is True
+    # The original receipt is from Chicago, IL and uses $ (USD)
+    # But the user instruction should override it to EUR
+    assert receipt.currency == "EUR", f"Expected EUR, but got {receipt.currency}"
+    
+    # Verify it still extracted the other data correctly
+    assert receipt.store == "HARBOR LANE CAFE" or "HARBOR LANE" in receipt.store
+    assert receipt.total == Decimal("31.39")
+    assert str(receipt.date) == "2019-11-20"
