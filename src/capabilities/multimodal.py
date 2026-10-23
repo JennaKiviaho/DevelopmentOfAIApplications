@@ -36,11 +36,14 @@ def analyze_receipt(image_path: str, client: OllamaModelClient, user_instruction
         Identify the purchased products, their prices and categories.
 
         Rules:
-        - Store: Read the business/store name from the top header or logo area (e.g. "Green Supermarket"). Look for title text. If partially obscured, infer the best match. Do not return "Unknown" if readable text exists at the top.
-        - Currency: Check for currency signs (€, EUR, $, £, kr). Default is 'EUR'.
+        - Store: Always extract the store name from the very top line of the receipt. It is usually the largest text, company name or brand banner
+        (e.g. "Sephora", "Walmart", "Prisma", "Lidl", "Rolex"). Read the exact name on top of the receipt but DO NOT use street address, business ID (Y-tunnus)
+        or website URL. Only use "Unknown" if the top part is completely cut off or blacked out.
+        - Currency: Identify the currency code (EUR, USD, GBP, SEK). Check symbols: '$' = USD, '€' = EUR, '£' = GBP, 'kr' = SEK. If the receipt has a US address/state (e.g. NY, OH) or mentions US DEBIT, use USD.
         - Date: Look for dates in any format like MM-DD-YYYY, DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, or DD.MM.YYYY. Always convert and return it in format: YYYY-MM-DD. If completely unreadable, return null.
-        - Total: Look for a total amount at the bottom. If no total sum is explicitly printed, sum up all the prices and return that value. Do not return 0.00 if there are items.
-        - Items: Include only actual purchased products. Do not include payment methods like Mastercard and Visa or VAT and ALV.
+        - Total: Look for the final payable amount explicitly labeled as 'TOTAL', 'SUMMA', or 'YHTEENSÄ'. DO NOT extract card numbers (such as debit card endings like 9166), SUBTOTAL, TAX, or change (CHANGE DUE) as the total.
+        - Items: Include ONLY actual purchased products. Do not include payment methods like Mastercard, Visa, US Debit and Amex. Do not include VAT, ALV and TAX.
+        Do not include coupons.
 
         Use these product categories:
         - Food
@@ -65,6 +68,9 @@ def analyze_receipt(image_path: str, client: OllamaModelClient, user_instruction
           instead of guessing.
 
         Return:
+        - Store (The merchant name from the top header)
+        - Date
+        - Currency
         - The category of each product
         - A list of products and their prices
         - The total amount
