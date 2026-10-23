@@ -106,9 +106,9 @@
     "expected_behavior": "The model applies to user instructions and overrides default category choices and categorizes all the items as Household.",
     "actual_result": "",
     "status": "pending"
-  }
+  },
 
-    {
+  {
     "id": "case-13",
     "category": "failure_case",
     "input": "Send an image to analyze_receipt where the AI model returns malformed/invalid JSON (e.g. '{\"store\": \"THE BISTRO\"}' with missing required fields such as 'items' or 'total').",
