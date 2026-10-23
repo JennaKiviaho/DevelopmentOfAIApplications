@@ -61,10 +61,8 @@ def test_initialize_database_creates_tables(temp_db):
 
 
 
-# CASE-01 (DB side): This covers half of the pipeline, which is what makes case-02 possible.
-# case-01 itself is a multimodal/extraction concern and locates intest_multimodal.py. The tests below cover the persistence half of the
-# pipeline, which is what makes case-02 possible.
-
+# CASE-02 / CASE-03 (combined smoke test): The application must be able to save
+# a receipt and then list it back out.
 # Verifying receipt can be saved and retrieved. App needs to be able to save and retrieve receipts from the database.
 def test_save_and_list_receipts(temp_db, sample_receipt):
     receipt_id = save_receipt(sample_receipt, source_filename="bistro.jpg", path=temp_db)
@@ -93,17 +91,6 @@ def test_save_receipt_persists_line_items(temp_db, sample_receipt):
         ("BURGER", "14.99", "Restaurant"),
         ("SALAD", "9.99", "Restaurant"),
     ]
-
-
-# Duplicete protection 
-# Verify that saving the exact same receipt twice raises DuplicateReceiptError.
-def test_prevent_duplicate_receipts(temp_db, sample_receipt):
-    save_receipt(sample_receipt, path=temp_db)
-
-    with pytest.raises(DuplicateReceiptError):
-        # Try to save the exact same receipt again
-        save_receipt(sample_receipt, path=temp_db)
-
 
 
 # CASE-03: My Receipts listing shows store, date, total and currency.
@@ -190,3 +177,11 @@ def test_get_summary_groups_multiple_currencies(temp_db, sample_receipt, sample_
     assert by_currency["EUR"]["total_spending"] == Decimal("18.50")
 
 
+# CASE-11: Verify that saving the exact same receipt twice raises DuplicateReceiptError.
+# Duplicete protection 
+def test_prevent_duplicate_receipts(temp_db, sample_receipt):
+    save_receipt(sample_receipt, path=temp_db)
+
+    with pytest.raises(DuplicateReceiptError):
+        # Try to save the exact same receipt again
+        save_receipt(sample_receipt, path=temp_db)

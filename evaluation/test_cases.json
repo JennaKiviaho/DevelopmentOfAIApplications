@@ -4,38 +4,152 @@
     "category": "successful_case",
     "input": "Upload a clear image and click Analyze Receipt.",
     "expected_behavior": "The application extracts the store, date, products, prices, total and currency correctly.",
-    "actual_result": "",
-    "status": "pending"
+    "actual_result": "Model correctly extracted store (Sephora), currency (USD), total (191.63), and 4 line items categorized as Hygiene. Saved to database with ID 1. Minor issue with the date, it was parsed as 2024-03-18 (the correct year is 2026).",
+    "status": "partial"
   },
+
   {
     "id": "case-02",
     "category": "successful_case",
     "input": "Analyze a valid receipt and check the SQLite database.",
     "expected_behavior": "The receipt and its line items are saved in the database.",
-    "actual_result": "",
-    "status": "pending"
+    "actual_result": "Receipt was succesfully saved to SQLite database with generated ID 1 and all the line items",
+    "status": "pass"
   },
+
   {
     "id": "case-03",
     "category": "successful_case",
     "input": "Open My Receipts after saving a receipt.",
     "expected_behavior": "The saved receipt appears with its store, date, total and currency.",
-    "actual_result": "",
-    "status": "pending"
+    "actual_result": "'My receipts' page shows store, date, total and currency and also when it was created at.",
+    "status": "pass"
   },
+
   {
     "id": "case-04",
     "category": "successful_case",
     "input": "Save three different receipts and click Refresh Receipts.",
     "expected_behavior": "All three receipts appear in the saved receipts table.",
-    "actual_result": "",
-    "status": "pending"
+    "actual_result": "My receipts page show all three uploaded receipts.",
+    "status": "pass"
   },
+  
   {
     "id": "case-05",
     "category": "successful_case",
     "input": "Open Spending Summary with saved receipts.",
     "expected_behavior": "The application displays total spending and receipt counts grouped by currency.",
+    "actual_result": "The applications summary page displays receipt counts grouped by currency: EUR has 1 saved receipt with a total of 27.35 and USD has 2 saved receipts with a total of 1035.41",
+    "status": "pass"
+  },
+
+  {
+    "id": "case-06",
+    "category": "difficult_case",
+    "input": "Upload an image of a wrinkled receipt.",
+    "expected_behavior": "The model extracts fields (store, total, date) despite wrinkles and categorizes line items.",
+    "actual_result": "The model extracted store (Brix), total (14.46 USD), date (2018-11-16) even when the date was presented in 'November 16, 2018' format. Categorized the two line items (tea, wings) correctly (food)",
+    "status": "pass"
+  },
+
+  {
+    "id": "case-07",
+    "category": "difficult_case",
+    "input": "Upload an blurred image of a receipt.",
+    "expected_behavior": "The model extracts fields (store, total, date) despite blurriness and categorizes line items.",
+    "actual_result": "The application did not finish the analysis and returned a error message",
+    "status": "fail"
+  },
+
+  {
+    "id": "case-08",
+    "category": "difficult_case",
+    "input": "Upload an image of a long receipt. (25 lines)",
+    "expected_behavior": "The model extracts fields (store, total, date) despite the receipt being long and categorizes line items.",
+    "actual_result": "Failed to parse total amount, confusing debit card last digits (9166 as total (916 USD). Hallucinated line items and looped them ('STKOOLRPLAB' x7). Categorized all items as food like PET TOY and FLOPPY PUPPY.",
+    "status": "fail"
+  },
+
+  {
+    "id": "case-09",
+    "category": "failure_case",
+    "input": "Upload an image of something other than receipt.",
+    "expected_behavior": "The application returns 'Image is not a receipt.'",
+    "actual_result": "The application did not finish the analysis but gave different error message 'Unexpected error' instead of 'Image is not receipt'.",
+    "status": "fail"
+  },
+
+  {
+    "id": "case-10",
+    "category": "failure_case",
+    "input": "Empty input (user does not upload a picture)",
+    "expected_behavior": "The application returns 'Please upload your receipt.'",
+    "actual_result": "The application returned 'Please upload a receipt first'",
+    "status": "pass"
+  },
+
+  {
+    "id": "case-11",
+    "category": "failure_case",
+    "input": "Upload a image of the same receipt twice.",
+    "expected_behavior": "Database flags a DuplicateReceiptError and the application notifies user that the receipt already exists in the database.",
+    "actual_result": "The application gave a error message for duplicate receipts saying 'Receipt from Green Supermarket on None (27.35 EUR) already exists.'",
+    "status": "pass"
+  },
+
+
+  {
+    "id": "case-12",
+    "category": "difficult_case",
+    "input": "Upload a image of receipt and user instructions: Categorize all the items as Household.",
+    "expected_behavior": "The model applies to user instructions and overrides default category choices and categorizes all the items as Household.",
+    "actual_result": "After uploading a image of restaurant receipt (food category) and giving it the household categorizing instructions it did categorize them as household.",
+    "status": "pass"
+  },
+
+  {
+    "id": "case-13",
+    "category": "difficult_case",
+    "input": "Upload a image of receipt which is missing metadata",
+    "expected_behavior": "The application should extract store, total and all line items with their categories correctly and set missing metadata (date) as null without hallucinating the date.",
+    "actual_result": "The application extracted store (Green Supermarket), total (27.35 USD) and all line items with correct categories (food). Left date as unknown since it is not on the receipt.",
+    "status": "pass"
+  },
+
+  {
+    "id": "case-14",
+    "category": "failure_case",
+    "input": "Extremely blurred or barely readable image of a receipt.",
+    "expected_behavior": "The application should not crash and catch parsing failures and display a user friendly error message.",
+    "actual_result": "The Application did not crash but returned a generic error message 'An unexpected error occurred during receipt analysis' instead of specifying why the analysis failed.",
+    "status": "partial"
+  },
+
+  {
+    "id": "case-15",
+    "category": "difficult_case",
+    "input": "Uploading an image of a receipt and giving user instructions 'Currency is EUR'.",
+    "expected_behavior": "The application returns store name, total, date and line items as they are but changes the currency to EUR.",
+    "actual_result": "The application extracted store name (Harbor Lane Cafe), total (31.39 EUR) and date (2019-11-20) correctly. And the currency was originally USD but after user instructions the model changed it to EUR.",
+    "status": "pass"
+  },
+
+
+  {
+    "id": "case-16",
+    "category": "failure_case",
+    "input": "Send an image to analyze_receipt where the AI model returns malformed/invalid JSON (e.g. '{\"store\": \"THE BISTRO\"}' with missing required fields such as 'items' or 'total').",
+    "expected_behavior": "The model's invalid JSON output fails validation against the response schema, and a Pydantic ValidationError is raised instead of silently accepting incomplete data.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-17",
+    "category": "failure_case",
+    "input": "Send an image to analyze_receipt where the underlying model client (Ollama) raises an OllamaConnectionError('Connection refused').",
+    "expected_behavior": "The Ollama connection error propagates up through analyze_receipt to the UI layer, allowing the application to surface a clear model-unavailable error to the user rather than crashing or swallowing the exception.",
     "actual_result": "",
     "status": "pending"
   }

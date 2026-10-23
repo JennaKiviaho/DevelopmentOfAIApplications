@@ -180,9 +180,9 @@ def build_ui() -> gr.Blocks:
             gr.Markdown("Select a category to view your purchases.")
 
             summary_button = gr.Button("Update Summary",elem_classes=["action-button"])
-            summary_output = gr.Markdown()
+            summary_output = gr.Markdown(elem_id="summary-output")
 
-            currency_choice = gr.Dropdown(choices=["EUR", "USD"],value="EUR",label="Currency")
+            currency_choice = gr.Dropdown(choices=["EUR", "USD"],value="EUR",label="Currency", elem_id="currency-dropdown")
 
             gr.Markdown("### Categories")
 

@@ -242,3 +242,14 @@
     background: #164B35 !important;
     transform: translateY(-3px);
 }
+
+#currency-dropdown {
+    color: var(--forest-dark) !important;
+    background: var(--forest-dark) !important;
+    border: 2px solid #164B35 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    --block-background-fill: var(--forest-dark) !important;
+    --input-background-fill: var(--forest-dark) !important;
+    --border-color-primary: var(--mint) !important;
+}

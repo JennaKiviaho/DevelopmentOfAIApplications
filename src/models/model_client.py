@@ -72,6 +72,7 @@ class OllamaModelClient:
                     }
                 ],
                 format = schema,
+                options = {"temperature": 0.0},
             )
 
             if isinstance(response, dict):
