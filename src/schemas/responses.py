@@ -29,7 +29,7 @@ class ReceiptLineItem(BaseModel):
 class ReceiptData(BaseModel):
     is_receipt: bool = Field(description="true if receipt, false if something else like animal or landscape")
     store: NonBlank = Field(description = "The store, merchant, or brand name printed at the very top of the receipt or logo area (e.g. Sephora, Lidl, Prisma)")
-    date: Optional[str] = Field(default=None, description="Receipts date YYYY-MM-DD")
+    date: Optional[str] = Field(default=None, description="Receipts date in YYYY-MM-DD format. If no date is printed on the receipt, return null. Never guess or invent dates.")
     total: Money = Field(description="Receipts total sum")
     currency: Literal["EUR", "USD", "GBP", "SEK"] = Field(description="Currency code: USD for $, EUR for €, GBP for £, SEK for kr")
     items: list[ReceiptLineItem] = Field(default_factory=list, max_length=500)

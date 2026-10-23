@@ -40,7 +40,7 @@ def analyze_receipt(image_path: str, client: OllamaModelClient, user_instruction
         (e.g. "Sephora", "Walmart", "Prisma", "Lidl", "Rolex"). Read the exact name on top of the receipt but DO NOT use street address, business ID (Y-tunnus)
         or website URL. Only use "Unknown" if the top part is completely cut off or blacked out.
         - Currency: Identify the currency code (EUR, USD, GBP, SEK). Check symbols: '$' = USD, '€' = EUR, '£' = GBP, 'kr' = SEK. If the receipt has a US address/state (e.g. NY, OH) or mentions US DEBIT, use USD.
-        - Date: Look for dates in any format like MM-DD-YYYY, DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, or DD.MM.YYYY. Always convert and return it in format: YYYY-MM-DD. If completely unreadable, return null.
+        - Date: Look for dates in any format like MM-DD-YYYY, DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, or DD.MM.YYYY. Convert and return it in format: YYYY-MM-DD. If completely unreadable or there IS NO date, return null.
         - Total: Look for the final payable amount explicitly labeled as 'TOTAL', 'SUMMA', or 'YHTEENSÄ'. DO NOT extract card numbers (such as debit card endings like 9166), SUBTOTAL, TAX, or change (CHANGE DUE) as the total.
         - Items: Include ONLY actual purchased products. Do not include payment methods like Mastercard, Visa, US Debit and Amex. Do not include VAT, ALV and TAX.
         Do not include coupons.
