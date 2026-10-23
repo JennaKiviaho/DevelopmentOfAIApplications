@@ -11,6 +11,7 @@ not that it equals one specific number.
 from pathlib import Path
 
 import pytest
+from decimal import Decimal
 
 from src.capabilities.multimodal import analyze_receipt
 from src.models.model_client import OllamaModelClient
@@ -118,3 +119,17 @@ def test_custom_instruction_overrides_categories(client):
         f"All items should be categorised as 'Household', but these were not: "
         f"{non_household}"
     )
+
+# CASE-13: Upload a image of receipt which is missing metadata
+# missing metadata (date)
+# extract fields from a receipt that has no date. The model should set date=None and NOT hallucinate a date.
+@pytest.mark.integration
+def test_receipt_missing_date(client):
+    receipt, raw_text = analyze_receipt(FIXTURES / "no_date_receipt.jpg", client)
+
+    _assert_basic_receipt_fields(receipt)
+    assert receipt.date is None, (
+        f"Model hallucinated a date ({receipt.date}) on a receipt that has none."
+    )
+    # Based on your colleague's manual test, the total was 27.35
+    assert receipt.total == Decimal("27.35")
