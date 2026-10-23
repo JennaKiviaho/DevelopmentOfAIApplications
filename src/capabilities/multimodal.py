@@ -54,6 +54,7 @@ def analyze_receipt(image_path: str, client: OllamaModelClient, user_instruction
         - Other
 
         Instructions:
+        - If user instructions specify overrides (such as assigning all items to a specific category like 'Household' or currency is USD), you MUST obey the user instructions and ignore your default item classifications.
         - If the receipt is from a grocery store or supermarket,
           classify food products as Food.
         - If the receipt is from a restaurant, cafe or fast-food restaurant,
