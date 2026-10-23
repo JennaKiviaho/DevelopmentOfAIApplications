@@ -7,6 +7,7 @@
     "actual_result": "",
     "status": "pending"
   },
+
   {
     "id": "case-02",
     "category": "successful_case",
@@ -15,6 +16,7 @@
     "actual_result": "",
     "status": "pending"
   },
+
   {
     "id": "case-03",
     "category": "successful_case",
@@ -23,6 +25,7 @@
     "actual_result": "",
     "status": "pending"
   },
+
   {
     "id": "case-04",
     "category": "successful_case",
@@ -31,11 +34,76 @@
     "actual_result": "",
     "status": "pending"
   },
+  
   {
     "id": "case-05",
     "category": "successful_case",
     "input": "Open Spending Summary with saved receipts.",
     "expected_behavior": "The application displays total spending and receipt counts grouped by currency.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-06",
+    "category": "difficult_case",
+    "input": "Upload a image of a wrinkled receipt.",
+    "expected_behavior": "The model extracts fields (store, total, date) despite wrinkles and categorizes line items.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-07",
+    "category": "difficult_case",
+    "input": "Upload a blurred image of a receipt.",
+    "expected_behavior": "The model extracts fields (store, total, date) despite blurriness and categorizes line items.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-08",
+    "category": "difficult_case",
+    "input": "Upload a image of a long receipt.",
+    "expected_behavior": "The model extracts fields (store, total, date) despite the receipt being long and categorizes line items.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-09",
+    "category": "failure_case",
+    "input": "Upload a image of something other than receipt.",
+    "expected_behavior": "The application returns 'Image is not a receipt.'",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-10",
+    "category": "failure_case",
+    "input": "Empty input (user does not upload a picture)",
+    "expected_behavior": "The application returns 'Please upload your receipt.'",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+  {
+    "id": "case-11",
+    "category": "failure_case",
+    "input": "Upload a image of the same receipt twice.",
+    "expected_behavior": "Database flags a DuplicateReceiptError and the application notifies user that the receipt already exists in the database.",
+    "actual_result": "",
+    "status": "pending"
+  },
+
+
+  {
+    "id": "case-12",
+    "category": "difficult_case",
+    "input": "Upload a image of receipt and user instructions: Categorize all the items as Household.",
+    "expected_behavior": "The model applies to user instructions and overrides default category choices and categorizes all the items as Household.",
     "actual_result": "",
     "status": "pending"
   }
