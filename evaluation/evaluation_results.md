@@ -1,7 +1,5 @@
 # Evaluation Results Summary
 
-Document your team's evaluation results below.
-
 The system was evaluated using both manual testing through the application interface and automated backend script tests (pytest). Manual testing was done by uploading real receipt images directly through the application to test multimodal extraction, visual edge cases and user notifications (error messages.) Backend testing was done by automated script tests (via pytest) to verify SQLite database functions, duplicate handling and summary calculations, schema validations (`ValidationError`) and mock error handling (`OllamaConnectionError`). We used distinct separated pictures for automated script tests to achieve reproducibility.
 
 Because the application relies on a non-deterministic Vision Language Model (minicpm-v via Ollama), we organized our automated script tests into four files (one per code module) and applied two testing methodologies: mocked unit tests for deterministic logic verification, and live integration tests for real AI performance evaluation:
@@ -24,8 +22,8 @@ We considered 3 partial test results as failed in pass rate calculation.
 | Category | Total Cases | Passed | Failed | Pass Rate |
 | :--- | :---: | :---: | :---: | :---: |
 | Successful Cases | 5 | 4 | 1 | 80% |
-| Difficult Cases | 6 | 3 | 0 | 50% |
-| Failure / Edge Cases | 6 | 4 | 0 | 67% |
+| Difficult Cases | 6 | 3 | 3 | 50% |
+| Failure / Edge Cases | 6 | 4 | 2 | 67% |
 
 ## Key Findings & Failure Analysis
 
