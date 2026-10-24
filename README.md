@@ -35,8 +35,14 @@ The application reduces the manual work that goes into categorizing the purchase
 ## Main user workflow
 
 1. **User Input:** The user uploads a receipt through the Gradio user interface.
-2. **Processing & Guardrails:** The application service layer (`src/services/ai_service.py`) validates and formats the request.
-3. **Model Response:** The model client calls Ollama locally and returns the response back through the service layer to the UI.
+2. **Request processing:** The Gradio interface passes the request to the AI Service (`src/services/ai_service.py`).
+3. **Multimodal processing:** The AI Service uses the multimodal capability (`src/capabilities/multimodal.py`) to prepare the image and instructions for the AI model.
+4. **Model inference:** The Model Client (`src/models/model_client.py`) communicates with the locally running Ollama server and the MiniCPM-V vision model.
+5. **Information extraction:** The model identifies receipt information, including the store name, purchase date, total amount, currency, and purchased items.
+6. **Categorization:** The model assigns purchased products to predefined spending categories.
+7. **Response validation:** The model output is parsed and validated using Pydantic schemas.
+8. **Storage:** After successful analysis, the receipt information is passed to the Memory module (`src/capabilities/memory.py`) and saved to the SQLite database.
+9. **Spending overview:** The user can browse saved receipts and view total spending and category percentages.
 
 ## Architecture
 
@@ -116,19 +122,7 @@ conda activate dev-ai-project
 
 ### 3. Configure environment variables
 
-Copy `.env.example` to create your local `.env` configuration file:
-
-On Linux / macOS:
-```bash
-cp .env.example .env
-```
-
-On Windows (Command Prompt / PowerShell):
-```powershell
-copy .env.example .env
-```
-
-Ensure `.env` contains valid values for `OLLAMA_BASE_URL` and `MODEL_NAME`:
+Create `.env` file in the project root directory with the following content:
 ```env
 OLLAMA_BASE_URL=http://localhost:11434
 MODEL_NAME=minicpm-v
@@ -136,10 +130,10 @@ MODEL_NAME=minicpm-v
 
 ### 4. Start Ollama
 
-Make sure Ollama is installed and running locally, then pull your configured model:
+Make sure Ollama is installed and running locally, then download the required model:
 
 ```bash
-ollama run minicpm-v
+ollama pull minicpm-v
 ```
 
 ### 5. Run the application
