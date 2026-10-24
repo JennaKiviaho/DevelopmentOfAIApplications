@@ -149,7 +149,17 @@ Then open your browser at `http://localhost:7860`.
 ### 6. Run automated tests
 
 ```bash
+# Run all tests
 pytest
+
+# Run just part of automated test modules and gets results
+pytest tests/test_multimodal.py -v
+pytest tests/test_memory.py -v
+pytest tests/test_ai_service.py -v
+pytest tests/test_integration.py -v
+
+# Run everyhing else but skip slow AI testing part
+pytest -v -m "not integration"
 ```
 
 ## Evaluation
