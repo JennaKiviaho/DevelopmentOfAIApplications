@@ -2,6 +2,9 @@
 
 Starter template for the **Development of AI Applications** course final group project.
 
+The video link:
+https://drive.google.com/file/d/1TlM5I6GL27mhJIDKRLGAiuvxJDbvJF57/view?usp=drive_link
+
 ## Team members
 
 RyhmäRämä
@@ -164,9 +167,11 @@ pytest -v -m "not integration"
 
 ## Evaluation
 
-Describe your evaluation methodology and summarize key results. Starter test cases can be found in [`evaluation/test_cases.json`](evaluation/test_cases.json).
+Our evaluation summary can be found here: [`evaluation/evaluation_results.md`](evaluation/evaluation_results.md)
 
-Refer to [`evaluation/README.md`](evaluation/README.md) for guidelines on defining success, edge cases, and failure scenarios.
+Test cases can be found in [`evaluation/test_cases.json`](evaluation/test_cases.json).
+
+Refer to [`evaluation/evaluation_results.md`](evaluation/evaluation_results.md) for guidelines on defining success, edge cases, and failure scenarios.
 
 - **Successful case:**
   Clear picture of a receipt to verify the model extracts all the items and prices correctly from the image and then categorizes products into structured format (JSON).
